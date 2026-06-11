@@ -12,7 +12,10 @@ export type AnalyticsEvent =
   | "order_confirmed"
   | "coupon_used"
   | "assistant_opened"
-  | "assistant_message";
+  | "assistant_message"
+  | "marketplace_link_opened"
+  | "identity_step_up"
+  | "identity_panel_viewed";
 
 const KEY = "birge-analytics";
 const MAX_EVENTS = 200;

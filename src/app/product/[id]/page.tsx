@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useI18n, localized } from "@/lib/i18n";
 import { useBirgeStore } from "@/lib/store";
 import { productById } from "@/data/products";
-import { marketplaceById } from "@/data/marketplaces";
+import { marketplaceById, marketplaceProductUrl } from "@/data/marketplaces";
 import { formatKzt } from "@/lib/currency";
 import { ProductImage } from "@/components/ProductImage";
 import { MarketplaceBadge } from "@/components/MarketplaceBadge";
@@ -171,6 +171,22 @@ export default function ProductPage() {
             <p className="t-h3 mb-1.5">{t("description_label")}</p>
             <p className="t-sub leading-relaxed">{description}</p>
           </div>
+
+          {/* deep link to the exact live marketplace listing this mirrors */}
+          <a
+            href={marketplaceProductUrl(product)}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => track("marketplace_link_opened", { productId: product.id, marketplaceId: mp.id })}
+            className="card flex items-center justify-between"
+          >
+            <span className="flex items-center gap-2 text-[14px] font-bold" style={{ color: mp.badgeColor }}>
+              🛒 {t("view_on_marketplace", { name: mp.name })}
+            </span>
+            <span className="text-[15px] font-bold" style={{ color: mp.badgeColor }} aria-hidden>
+              ↗
+            </span>
+          </a>
         </div>
       </main>
 

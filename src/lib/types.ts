@@ -40,6 +40,8 @@ export interface Product {
   descriptionEn: string;
   emoji: string;
   gradient: [string, string];
+  image?: string; // local photo under /public; emoji+tint tile is the fallback
+  externalUrl?: string; // exact live marketplace listing this product mirrors
   soloPriceKzt: number;
   priceTiers: PriceTier[]; // strictly decreasing price as minParticipants grows
   deliveryDays: number;
