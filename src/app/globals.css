@@ -1,26 +1,51 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  /* KZ-inspired palette: sky blue + gold */
+  --color-primary: #00a3c4;
+  --color-primary-dark: #00829d;
+  --color-primary-light: #e0f6fa;
+  --color-accent: #f5b301;
+  --color-accent-light: #fdf3d7;
+  --color-ink: #11242d;
+  --color-muted: #5e7079;
+  --color-bg: #f2f5f7;
+  --color-card: #ffffff;
+  --color-success: #1fa463;
+  --color-success-light: #e3f6ec;
+  --color-danger: #e5484d;
+  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #d8dee4;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+@layer components {
+  .btn-primary {
+    @apply flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-5 py-4 text-base font-semibold text-white shadow-lg shadow-primary/25 transition active:scale-[0.98] disabled:opacity-40 disabled:shadow-none;
+  }
+  .btn-secondary {
+    @apply flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-primary/20 bg-white px-5 py-4 text-base font-semibold text-primary-dark transition active:scale-[0.98] disabled:opacity-40;
+  }
+  .card {
+    @apply rounded-2xl bg-card p-4 shadow-sm;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-white px-3.5 py-2 text-sm font-medium text-ink transition active:scale-95;
+  }
+  .chip-active {
+    @apply border-primary bg-primary-light text-primary-dark;
+  }
+}
+
+/* hide scrollbars inside the phone frame for an app-like feel */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
