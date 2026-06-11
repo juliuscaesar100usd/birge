@@ -10,7 +10,9 @@ export type AnalyticsEvent =
   | "invite_sent"
   | "threshold_reached"
   | "order_confirmed"
-  | "coupon_used";
+  | "coupon_used"
+  | "assistant_opened"
+  | "assistant_message";
 
 const KEY = "birge-analytics";
 const MAX_EVENTS = 200;

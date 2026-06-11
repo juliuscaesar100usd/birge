@@ -168,6 +168,30 @@ const ru = {
   nav_profile: "Профиль",
   budget_label: "Бюджет",
   city_label: "Город",
+
+  // S16 AI assistant
+  nav_assistant: "Помощник",
+  assistant_title: "ИИ-помощник",
+  assistant_welcome:
+    "Привет! Я помощник Birge ✨ Подберу товары, объясню групповые покупки, отвечу про доставку, НДС и ваши заказы. Чем помочь?",
+  assistant_placeholder: "Спросите о товарах, группах, доставке…",
+  assistant_mode_demo: "Демо-режим",
+  assistant_mode_free: "Бесплатный ИИ",
+  qp_recommend: "Что купить до 10 000 ₸?",
+  qp_group: "Как работает групповая покупка?",
+  qp_delivery: "Доставка и НДС — как это устроено?",
+  qp_order: "Где мой заказ?",
+  mock_recommend: "Вот что подходит под ваши интересы и бюджет:",
+  mock_group:
+    "Групповая покупка — сердце Birge: присоединяйтесь к группе или создайте свою и пригласите друзей через Telegram или WhatsApp. Когда набирается 5 участников, группа закрывается и цена падает на 27–35%. Если группа не соберётся — деньги не списываются. Попробуйте на хите:\n[[prd_01]]",
+  mock_delivery:
+    "Доставка занимает 3–15 дней в зависимости от маркетплейса. Для зарубежных площадок (AliExpress, Temu) в цену уже включён НДС 12%, действует лимит беспошлинного ввоза ЕАЭС €200 / 31 кг. Возврат — в течение 14 дней.",
+  mock_order_last:
+    "Ваш последний заказ: {title} — {status}, итого {total}. Все заказы можно посмотреть в профиле.",
+  mock_order_none: "У вас пока нет заказов. Хотите, подберу что-нибудь выгодное в группе?",
+  mock_default:
+    "Могу подобрать товары под ваш бюджет, объяснить групповые покупки, рассказать про доставку и НДС или показать статус заказа. Спросите меня!",
+  order_confirmed_word: "подтверждён",
 };
 
 export type DictKey = keyof typeof ru;
@@ -324,6 +348,29 @@ const kk: Dict = {
   nav_profile: "Профиль",
   budget_label: "Бюджет",
   city_label: "Қала",
+
+  nav_assistant: "Көмекші",
+  assistant_title: "AI-көмекші",
+  assistant_welcome:
+    "Сәлем! Мен Birge көмекшісімін ✨ Тауар таңдаймын, топтық сатып алуды түсіндіремін, жеткізу, ҚҚС және тапсырыстарыңыз туралы жауап беремін. Немен көмектесейін?",
+  assistant_placeholder: "Тауар, топ, жеткізу туралы сұраңыз…",
+  assistant_mode_demo: "Демо-режим",
+  assistant_mode_free: "Тегін AI",
+  qp_recommend: "10 000 ₸ дейін не сатып алған жөн?",
+  qp_group: "Топтық сатып алу қалай жұмыс істейді?",
+  qp_delivery: "Жеткізу мен ҚҚС қалай жұмыс істейді?",
+  qp_order: "Менің тапсырысым қайда?",
+  mock_recommend: "Қызығушылықтарыңыз бен бюджетіңізге сай нұсқалар:",
+  mock_group:
+    "Топтық сатып алу — Birge жүрегі: топқа қосылыңыз немесе өз тобыңызды құрып, достарды Telegram не WhatsApp арқылы шақырыңыз. 5 қатысушы жиналғанда топ жабылып, баға 27–35%-ға төмендейді. Топ жиналмаса — ақша алынбайды. Хит тауарда көріңіз:\n[[prd_01]]",
+  mock_delivery:
+    "Жеткізу маркетплейске байланысты 3–15 күн. Шетелдік алаңдар үшін (AliExpress, Temu) бағаға 12% ҚҚС қосылған, ЕАЭО бажсыз әкелу лимиті — €200 / 31 кг. Қайтару — 14 күн ішінде.",
+  mock_order_last:
+    "Соңғы тапсырысыңыз: {title} — {status}, барлығы {total}. Барлық тапсырыстар профильде.",
+  mock_order_none: "Әзірге тапсырыс жоқ. Топпен тиімді бірдеңе таңдап берейін бе?",
+  mock_default:
+    "Бюджетіңізге сай тауар таңдай аламын, топтық сатып алуды түсіндіремін, жеткізу мен ҚҚС туралы айтамын немесе тапсырыс мәртебесін көрсетемін. Сұрай беріңіз!",
+  order_confirmed_word: "расталды",
 };
 
 const en: Dict = {
@@ -477,6 +524,29 @@ const en: Dict = {
   nav_profile: "Profile",
   budget_label: "Budget",
   city_label: "City",
+
+  nav_assistant: "Assistant",
+  assistant_title: "AI Assistant",
+  assistant_welcome:
+    "Hi! I’m the Birge assistant ✨ I can pick products for you, explain group buying, and answer questions about delivery, VAT and your orders. How can I help?",
+  assistant_placeholder: "Ask about products, groups, delivery…",
+  assistant_mode_demo: "Demo mode",
+  assistant_mode_free: "Free AI",
+  qp_recommend: "What should I buy under 10,000 ₸?",
+  qp_group: "How does group buying work?",
+  qp_delivery: "How do delivery and VAT work?",
+  qp_order: "Where is my order?",
+  mock_recommend: "Here’s what fits your interests and budget:",
+  mock_group:
+    "Group buying is the heart of Birge: join a group or start your own and invite friends via Telegram or WhatsApp. When 5 people join, the group locks and the price drops by 27–35%. If it doesn’t fill, nobody is charged. Try it on a bestseller:\n[[prd_01]]",
+  mock_delivery:
+    "Delivery takes 3–15 days depending on the marketplace. For foreign platforms (AliExpress, Temu) the price already includes 12% VAT, and the EAEU duty-free limit is €200 / 31 kg. Returns within 14 days.",
+  mock_order_last:
+    "Your latest order: {title} — {status}, total {total}. See all orders in your profile.",
+  mock_order_none: "You have no orders yet. Want me to find a good group deal?",
+  mock_default:
+    "I can pick products for your budget, explain group buying, cover delivery and VAT, or show your order status. Just ask!",
+  order_confirmed_word: "confirmed",
 };
 
 export const dictionaries: Record<Locale, Dict> = { ru, kk, en };

@@ -45,6 +45,27 @@ Supabase Realtime).
 ~6 s — but they never deliver the locking join unless you are a member. The pre-seeded
 4/5 group always waits for *your* join to complete.
 
+## AI assistant (✨ tab)
+
+A context-aware assistant that helps with everything: picks products for your interests and
+budget, explains group buying, answers delivery/VAT/coupon questions, and shows order status.
+It knows the full catalog and your profile, replies in RU/KZ/EN, and renders recommended
+products as tappable cards.
+
+**Free-model chain** (the header chip shows which level is active):
+
+1. **Gemini** — set `GOOGLE_GENERATIVE_AI_API_KEY` in `.env.local` (free key from
+   [aistudio.google.com/apikey](https://aistudio.google.com/apikey), no card needed) → best
+   free-tier model.
+2. **Free AI** — no key needed: keyless OpenAI-compatible endpoint
+   (`text.pollinations.ai`), works out of the box.
+3. **Demo mode** — offline/rate-limited → a deterministic local assistant takes over
+   seamlessly, reusing the recommendation engine. The pitch never breaks (NFR-1).
+
+Implementation: Vercel AI SDK v6 streaming route at `src/app/api/assistant/route.ts`, system
+prompt built from the catalog + user context in `src/lib/assistant/context.ts`, offline
+fallback in `src/lib/assistant/mock.ts`, chat UI at `src/app/assistant/page.tsx`.
+
 ## Architecture (maps to TRD)
 
 ```

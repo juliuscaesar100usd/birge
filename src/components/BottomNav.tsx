@@ -10,6 +10,7 @@ export function BottomNav() {
 
   const tabs = [
     { href: "/feed", icon: "🏠", label: t("nav_home") },
+    { href: "/assistant", icon: "✨", label: t("nav_assistant") },
     { href: "/profile", icon: "👤", label: t("nav_profile") },
   ];
 

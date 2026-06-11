@@ -17,4 +17,8 @@ export const config = {
   NEW_GROUP_TARGET: 10,
   REFERRAL_REWARD_KZT: 500,
   WELCOME_COUPON_KZT: 500,
+  // AI assistant models: Gemini free tier when a key is set, keyless free API otherwise;
+  // the deterministic mock (client-side) is the final fallback per NFR-1
+  ASSISTANT_GEMINI_MODEL: "gemini-3.5-flash",
+  ASSISTANT_FREE_MODEL: "openai",
 };
