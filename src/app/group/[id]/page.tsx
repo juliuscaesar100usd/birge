@@ -264,12 +264,13 @@ export default function GroupPage() {
           <div className="flex gap-2.5">
             <button
               onClick={() => setInviteOpen(true)}
-              className="btn btn--outline w-[52px] shrink-0 px-0"
+              className="btn btn--outline shrink-0 px-0"
+              style={{ width: "52px", flex: "0 0 52px" }}
               aria-label={t("invite_friends")}
             >
               <Icon name="share" size={19} sw={2.2} />
             </button>
-            <button onClick={() => joinGroup(id)} className="btn btn--coral flex-1">
+            <button onClick={() => joinGroup(id)} className="btn btn--coral min-w-0 flex-1">
               {t("join_now")} · <span className="num">{formatKzt(joinPrice)}</span>
             </button>
           </div>
