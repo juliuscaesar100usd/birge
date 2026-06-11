@@ -144,7 +144,7 @@ export default function ProductPage() {
 
           {/* Deep link to the live marketplace listing */}
           <a
-            href={marketplaceProductUrl(product)}
+            href={product.externalUrl ?? marketplaceProductUrl(product)}
             target="_blank"
             rel="noopener noreferrer"
             className="card flex items-center justify-between text-sm font-semibold"

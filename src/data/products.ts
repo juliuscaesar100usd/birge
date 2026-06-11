@@ -43,13 +43,6 @@ const seed: ProductSeed[] = [
     emoji: "🎧",
     gradient: ["#667eea", "#764ba2"],
     soloPriceKzt: 15000,
-    // Hero product — exact ladder from Spec §3.4 adapted to the 5-person lock
-    priceTiers: [
-      { minParticipants: 1, unitPriceKzt: 15000 },
-      { minParticipants: 3, unitPriceKzt: 12900 },
-      { minParticipants: 5, unitPriceKzt: 10900 },
-      { minParticipants: 10, unitPriceKzt: 9900 },
-    ],
     deliveryDays: 12,
     deliveryKzt: 990,
     vatApplicable: true,
@@ -523,16 +516,21 @@ const seed: ProductSeed[] = [
   },
 ];
 
-// Merge dev-time scraped overrides (real photos + prices); seed stays the
-// hand-written source of truth and the offline fallback.
+// Merge dev-time scraped overrides — real marketplace items (exact listing
+// URL, real price, listing photo). A scraped price wins over everything,
+// including hand-tuned seed tiers; the seed remains the offline fallback.
 export const products: Product[] = seed.map((p) => {
   const over = scraped[p.id] ?? {};
-  const solo = p.priceTiers ? p.soloPriceKzt : (over.soloPriceKzt ?? p.soloPriceKzt);
+  const solo = over.soloPriceKzt ?? p.soloPriceKzt;
+  const tiers = over.soloPriceKzt
+    ? makeTiers(solo, p.id)
+    : (p.priceTiers ?? makeTiers(solo, p.id));
   return {
     ...p,
     image: over.image,
+    externalUrl: over.externalUrl,
     soloPriceKzt: solo,
-    priceTiers: p.priceTiers ?? makeTiers(solo, p.id),
+    priceTiers: tiers,
     stockStatus: p.stockStatus ?? "in_stock",
   };
 });

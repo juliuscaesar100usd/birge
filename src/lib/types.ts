@@ -38,6 +38,7 @@ export interface Product {
   emoji: string;
   gradient: [string, string];
   image?: string; // local photo under /public; emoji+gradient is the fallback
+  externalUrl?: string; // exact live listing this product mirrors
   soloPriceKzt: number;
   priceTiers: PriceTier[]; // strictly decreasing price as minParticipants grows
   deliveryDays: number;
