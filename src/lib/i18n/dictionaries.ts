@@ -246,6 +246,10 @@ const ru = {
   // S15 Profile
   profile: "Профиль",
   verified_identity: "Личность подтверждена оператором",
+  add_name: "Добавить имя",
+  edit_name: "Изменить имя",
+  name_placeholder: "Ваше имя",
+  save: "Сохранить",
   my_orders: "Мои заказы",
   orders_count: "{n} заказов",
   no_orders: "Пока нет заказов",
@@ -517,6 +521,10 @@ const kk: Dict = {
 
   profile: "Профиль",
   verified_identity: "Жеке басын оператор растады",
+  add_name: "Атыңызды қосу",
+  edit_name: "Атын өзгерту",
+  name_placeholder: "Атыңыз",
+  save: "Сақтау",
   my_orders: "Тапсырыстарым",
   orders_count: "{n} тапсырыс",
   no_orders: "Әзірге тапсырыс жоқ",
@@ -784,6 +792,10 @@ const en: Dict = {
 
   profile: "Profile",
   verified_identity: "Identity verified by carrier",
+  add_name: "Add your name",
+  edit_name: "Edit name",
+  name_placeholder: "Your name",
+  save: "Save",
   my_orders: "My orders",
   orders_count: "{n} orders",
   no_orders: "No orders yet",

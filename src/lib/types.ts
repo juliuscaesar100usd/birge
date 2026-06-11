@@ -109,6 +109,7 @@ export interface UserProfile {
   id: string;
   phone: string;
   displayName: string;
+  name?: string; // user-chosen name; shown in profile and as your group-member name
   isVerified: boolean;
   carrierLabel: string;
   budgetBand: BudgetBand;

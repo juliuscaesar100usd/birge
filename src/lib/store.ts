@@ -93,6 +93,7 @@ interface BirgeState {
   updatePreferences: (
     patch: Partial<Pick<UserProfile, "interests" | "budgetBand" | "city">>
   ) => void;
+  setName: (name: string) => void;
   toggleLike: (productId: string) => void;
   ensureSeeds: () => void;
   openGroupForProduct: (productId: string) => string | null;
@@ -203,6 +204,13 @@ export const useBirgeStore = create<BirgeState>()(
         set({ user: { ...user, ...patch } });
       },
 
+      setName: (name) => {
+        const user = get().user;
+        if (!user) return;
+        const trimmed = name.trim().slice(0, 24);
+        set({ user: { ...user, name: trimmed || undefined } });
+      },
+
       toggleLike: (productId) => {
         const user = get().user;
         if (!user) return;
@@ -278,7 +286,7 @@ export const useBirgeStore = create<BirgeState>()(
         const product = productById[group.productId];
         const member: GroupMember = {
           id: user.id,
-          name: user.displayName,
+          name: user.name || user.displayName,
           isSimulated: false,
           joinedAt: Date.now(),
         };
