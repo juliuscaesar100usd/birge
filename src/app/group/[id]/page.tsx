@@ -11,6 +11,7 @@ import { productById } from "@/data/products";
 import { formatKzt } from "@/lib/currency";
 import { config } from "@/lib/config";
 import { nextTier } from "@/lib/engine/groups";
+import { securityFor } from "@/lib/engine/identity";
 import { ProductImage } from "@/components/ProductImage";
 import { MarketplaceBadge } from "@/components/MarketplaceBadge";
 import { GroupProgressBar } from "@/components/GroupProgressBar";
@@ -34,9 +35,12 @@ export default function GroupPage() {
   const { id } = useParams<{ id: string }>();
   const group = useBirgeStore((s) => s.groups[id]);
   const user = useBirgeStore((s) => s.user);
+  const security = useBirgeStore((s) => s.security);
   const joinGroup = useBirgeStore((s) => s.joinGroup);
   const simulateJoin = useBirgeStore((s) => s.simulateJoin);
   const [inviteOpen, setInviteOpen] = useState(false);
+  const sec = securityFor(user?.phone ?? "", user?.carrierLabel ?? config.CARRIER_LABEL, security);
+  const simLabel = sec.simType === "sim" ? t("sim_label") : t("esim_label");
 
   const product = group ? productById[group.productId] : undefined;
   const isMember = !!user && !!group && group.members.some((m) => m.id === user.id);
@@ -176,6 +180,17 @@ export default function GroupPage() {
           )}
         </div>
 
+        {/* SIM/eSIM trust strip — anti-fraud: 1 verified human = 1 seat */}
+        <div className="card flex gap-3 border border-primary/15 bg-primary-light/50">
+          <span className="text-xl">🛡️</span>
+          <div>
+            <p className="text-sm font-bold text-primary-dark">{t("group_trust_title")}</p>
+            <p className="mt-0.5 text-xs leading-relaxed text-muted">
+              {t("group_trust_sub", { sim: simLabel })}
+            </p>
+          </div>
+        </div>
+
         {/* members (FR-6.9) */}
         <div className="card">
           <p className="mb-3 text-sm font-bold">
@@ -186,7 +201,13 @@ export default function GroupPage() {
               const isYou = m.id === user.id;
               return (
                 <div key={m.id} className="flex w-14 flex-col items-center gap-1 text-center">
-                  <Avatar name={isYou ? t("you") : m.name} highlight={isYou} />
+                  <div className="relative">
+                    <Avatar name={isYou ? t("you") : m.name} highlight={isYou} />
+                    {/* every participant is SIM/eSIM-verified */}
+                    <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-success text-[9px] text-white ring-2 ring-white">
+                      ✓
+                    </span>
+                  </div>
                   <span className={`w-full truncate text-[10px] font-medium ${isYou ? "font-bold text-primary-dark" : "text-muted"}`}>
                     {isYou ? t("you") : m.name}
                   </span>

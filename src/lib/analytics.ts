@@ -11,7 +11,9 @@ export type AnalyticsEvent =
   | "threshold_reached"
   | "order_confirmed"
   | "coupon_used"
-  | "marketplace_link_opened";
+  | "marketplace_link_opened"
+  | "identity_step_up"
+  | "identity_panel_viewed";
 
 const KEY = "birge-analytics";
 const MAX_EVENTS = 200;

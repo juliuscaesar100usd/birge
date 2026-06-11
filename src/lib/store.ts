@@ -15,6 +15,7 @@ import type {
   UserProfile,
 } from "@/lib/types";
 import { config } from "@/lib/config";
+import type { SecurityProfile } from "@/lib/engine/identity";
 import { applyDeadline, applyJoin, createGroup, newId, tierPriceFor } from "@/lib/engine/groups";
 import { productById } from "@/data/products";
 import { pickSimulatedName } from "@/data/names";
@@ -77,6 +78,7 @@ interface BirgeState {
   locale: Locale;
   pendingPhone: string | null;
   user: UserProfile | null;
+  security: SecurityProfile | null;
   groups: Record<string, Group>;
   orders: Order[];
   coupons: Coupon[];
@@ -87,7 +89,7 @@ interface BirgeState {
   setHasHydrated: (v: boolean) => void;
   setLocale: (l: Locale) => void;
   setPendingPhone: (phone: string) => void;
-  completeVerification: () => void;
+  completeVerification: (security?: SecurityProfile) => void;
   updatePreferences: (
     patch: Partial<Pick<UserProfile, "interests" | "budgetBand" | "city">>
   ) => void;
@@ -151,6 +153,7 @@ export const useBirgeStore = create<BirgeState>()(
       locale: "ru",
       pendingPhone: null,
       user: null,
+      security: null,
       groups: {},
       orders: [],
       coupons: [],
@@ -162,16 +165,18 @@ export const useBirgeStore = create<BirgeState>()(
       setLocale: (locale) => set({ locale }),
       setPendingPhone: (phone) => set({ pendingPhone: phone }),
 
-      completeVerification: () => {
+      completeVerification: (security) => {
         const { pendingPhone, user } = get();
         const phone = pendingPhone ?? user?.phone ?? "+77010000000";
-        if (user) return; // already verified — badge persists (FR-1.3)
+        // persist the security profile from the identity provider (FR-1.3)
+        if (security) set({ security });
+        if (user) return; // already verified — badge + identity persist
         const newUser: UserProfile = {
           id: newId("usr"),
           phone,
           displayName: `+7 ··· ${phone.slice(-4, -2)} ${phone.slice(-2)}`,
           isVerified: true,
-          carrierLabel: config.CARRIER_LABEL,
+          carrierLabel: security?.carrier ?? config.CARRIER_LABEL,
           budgetBand: "mid",
           city: "almaty",
           interests: [],
@@ -185,7 +190,11 @@ export const useBirgeStore = create<BirgeState>()(
           used: false,
         };
         set({ user: newUser, coupons: [...get().coupons, welcome] });
-        track("identity_verified", { method: "SNA-sim", carrier: config.CARRIER_LABEL });
+        track("identity_verified", {
+          method: security?.method ?? "sna",
+          simType: security?.simType ?? "esim",
+          carrier: security?.carrier ?? config.CARRIER_LABEL,
+        });
       },
 
       updatePreferences: (patch) => {
@@ -419,6 +428,7 @@ export const useBirgeStore = create<BirgeState>()(
         locale: s.locale,
         pendingPhone: s.pendingPhone,
         user: s.user,
+        security: s.security,
         groups: s.groups,
         orders: s.orders,
         coupons: s.coupons,

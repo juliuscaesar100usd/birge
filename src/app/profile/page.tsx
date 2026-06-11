@@ -9,6 +9,7 @@ import { productById } from "@/data/products";
 import { categoryById } from "@/data/categories";
 import { cityById } from "@/data/cities";
 import { formatKzt } from "@/lib/currency";
+import { securityFor } from "@/lib/engine/identity";
 import { Avatar } from "@/components/Avatar";
 import { VerifiedBadge } from "@/components/VerifiedBadge";
 import { LanguageToggle } from "@/components/LanguageToggle";
@@ -19,6 +20,7 @@ export default function ProfilePage() {
   const { t, locale } = useI18n();
   const router = useRouter();
   const user = useBirgeStore((s) => s.user);
+  const security = useBirgeStore((s) => s.security);
   const orders = useBirgeStore((s) => s.orders);
   const coupons = useBirgeStore((s) => s.coupons);
   const referrals = useBirgeStore((s) => s.referrals);
@@ -53,6 +55,36 @@ export default function ProfilePage() {
             <VerifiedBadge carrier={user.carrierLabel} className="mt-1.5" />
           </div>
         </div>
+
+        {/* SIM/eSIM security panel */}
+        {(() => {
+          const sec = securityFor(user.phone, user.carrierLabel, security);
+          const simLabel = sec.simType === "sim" ? t("sim_label") : t("esim_label");
+          return (
+            <section>
+              <h2 className="mb-2 text-sm font-bold text-muted">🔐 {t("security_title")}</h2>
+              <div className="card space-y-2.5 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="flex items-center gap-2 text-success">✓ {t("security_device_bound")}</span>
+                </div>
+                <div className="flex items-center justify-between border-t border-black/5 pt-2.5">
+                  <span className="flex items-center gap-2 text-success">✓ {t("security_sim_swap")}</span>
+                </div>
+                <div className="flex items-center justify-between border-t border-black/5 pt-2.5">
+                  <span className="text-muted">{t("security_id_label", { sim: simLabel })}</span>
+                  <span className="font-mono text-xs font-bold">{sec.identityId}</span>
+                </div>
+                <Link
+                  href="/identity"
+                  className="flex items-center justify-between border-t border-black/5 pt-2.5 text-xs font-bold text-primary-dark"
+                >
+                  <span>{t("security_more")}</span>
+                  <span aria-hidden>→</span>
+                </Link>
+              </div>
+            </section>
+          );
+        })()}
 
         {/* savings stat */}
         <div className="card flex items-center justify-between bg-gradient-to-r from-primary to-primary-dark text-white">

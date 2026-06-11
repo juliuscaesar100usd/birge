@@ -7,6 +7,8 @@ import { useBirgeStore } from "@/lib/store";
 import { productById } from "@/data/products";
 import { formatKzt } from "@/lib/currency";
 import { config } from "@/lib/config";
+import { identityProvider, securityFor } from "@/lib/engine/identity";
+import { track } from "@/lib/analytics";
 import { ProductImage } from "@/components/ProductImage";
 import { MarketplaceBadge } from "@/components/MarketplaceBadge";
 
@@ -23,10 +25,24 @@ function CheckoutInner() {
   const group = useBirgeStore((s) => (groupId ? s.groups[groupId] : undefined));
   const coupons = useBirgeStore((s) => s.coupons);
   const placeOrder = useBirgeStore((s) => s.placeOrder);
+  const security = useBirgeStore((s) => s.security);
+  const user = useBirgeStore((s) => s.user);
 
   const [couponInput, setCouponInput] = useState("");
   const [appliedCode, setAppliedCode] = useState<string | null>(null);
   const [couponError, setCouponError] = useState(false);
+  const [idState, setIdState] = useState<"idle" | "pending" | "done">("idle");
+
+  const sec = securityFor(user?.phone ?? "", user?.carrierLabel ?? config.CARRIER_LABEL, security);
+  const simLabel = sec.simType === "sim" ? t("sim_label") : t("esim_label");
+  const stepUp = () => {
+    if (idState !== "idle") return;
+    setIdState("pending");
+    identityProvider.confirmAction("purchase").then(() => {
+      setIdState("done");
+      track("identity_step_up", { productId, simType: sec.simType });
+    });
+  };
 
   if (!product) return null;
   if (mode === "group" && (!group || (group.status !== "locked" && group.status !== "completed"))) {
@@ -167,11 +183,33 @@ function CheckoutInner() {
         </div>
       </main>
 
-      <div className="shrink-0 border-t border-black/5 bg-white px-5 pb-[max(env(safe-area-inset-bottom),1rem)] pt-3">
+      <div className="shrink-0 space-y-2.5 border-t border-black/5 bg-white px-5 pb-[max(env(safe-area-inset-bottom),1rem)] pt-3">
+        {/* SIM/eSIM step-up — identity confirmation at the trust moment */}
+        {idState === "done" ? (
+          <div className="flex items-center gap-2 rounded-xl bg-success-light px-3 py-2 text-xs font-bold text-success">
+            <span>🔐</span>
+            <span>{t("identity_step_up_done", { id: sec.identityId })}</span>
+          </div>
+        ) : (
+          <button
+            onClick={stepUp}
+            disabled={idState === "pending"}
+            className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-primary/30 bg-primary-light px-3 py-2.5 text-xs font-bold text-primary-dark disabled:opacity-70"
+          >
+            {idState === "pending" ? (
+              <>
+                <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-primary-dark border-t-transparent" />
+                {t("identity_step_up_pending")}
+              </>
+            ) : (
+              <>🔐 {t("identity_step_up_cta", { sim: simLabel })}</>
+            )}
+          </button>
+        )}
         <button onClick={pay} className="btn-primary">
           💳 {t("pay_demo", { amount: formatKzt(total) })}
         </button>
-        <p className="mt-2 text-center text-[11px] text-muted">{t("pay_note")}</p>
+        <p className="text-center text-[11px] text-muted">{t("pay_note")}</p>
       </div>
     </div>
   );

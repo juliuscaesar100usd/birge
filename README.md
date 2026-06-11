@@ -62,14 +62,24 @@ src/
     engine/groups.ts        group state machine: OPEN → LOCKED → COMPLETED / FAILED
     engine/recommendations  Spec §5 weights: category .40 budget .25 location .15
                             popularity .15 taste .05 + explainability reasons
-    engine/identity.ts      IdentityProvider interface + MockSnaProvider — swaps to a
-                            real GSMA Open Gateway / CAMARA provider with no UX change
+    engine/identity.ts      IdentityProvider + MockSnaProvider → SecurityProfile
+                            (simType, deviceBound, simSwapSafe, identityId); fields
+                            map to GSMA Open Gateway / CAMARA APIs (Number
+                            Verification, SIM Swap, Device Status). confirmAction()
+                            = step-up re-auth. Swaps to a real provider, no UX change
     i18n/                   RU (default) / KK / EN bundles, live switching
     sync.ts                 BroadcastChannel cross-tab realtime
     analytics.ts            PRD §8 events → console + localStorage
   data/                     4 marketplaces, 8 categories, 26 products with price
                             tiers, KZ cities, simulated participant pool
 ```
+
+**SIM/eSIM identity layer** (ТЗ Level-2 vision, surfaced across the app): verify screen +
+"Verified by Kcell" badge, a step-up SIM confirmation at checkout, a "1 SIM = 1 seat ·
+verified participants only" anti-fraud strip on group pages (the reason wholesale pricing
+can't be gamed), a security panel in Profile, and a dedicated `/identity` architecture
+screen mapping the trust stack (secure element → carrier → Open Gateway → Birge). All
+mocked behind `IdentityProvider`; the ТЗ explicitly scopes physical SIM/eSIM out.
 
 Level-2 swap path (TRD §9): replace `MockSnaProvider` with an Open Gateway provider and
 the Zustand mock layer with Supabase (same contracts) — the UX does not change.

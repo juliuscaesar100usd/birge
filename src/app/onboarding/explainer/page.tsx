@@ -37,7 +37,10 @@ export default function ExplainerPage() {
         ))}
       </div>
 
-      <div className="mt-auto pb-8 pt-6">
+      <div className="mt-auto space-y-3 pb-8 pt-6">
+        <Link href="/identity" className="block text-center text-xs font-semibold text-primary-dark">
+          {t("security_more")} →
+        </Link>
         <Link href="/onboarding/interests" className="btn-primary">
           {t("continue")} →
         </Link>
