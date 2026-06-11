@@ -8,7 +8,7 @@ export const config = {
   DEMO_AUTO_JOIN_INTERVAL_MS: 6000,
   USE_LLM_RECS: false,
   DEMO_FALLBACK_OTP: false,
-  CARRIER_LABEL: "Kcell",
+  CARRIER_LABEL: "Beeline KZ",
   // Group window compressed for the demo (real default: 24h)
   GROUP_WINDOW_MS: 40 * 60 * 1000,
   EXTEND_MS: 30 * 60 * 1000,

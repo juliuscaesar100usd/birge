@@ -17,7 +17,10 @@ export interface Category {
   nameRu: string;
   nameKk: string;
   nameEn: string;
-  icon: string;
+  icon: string; // emoji (legacy)
+  iconName: string; // stroke icon id (components/Icon)
+  tint: string; // soft tile background
+  ink: string; // matching darker accent
 }
 
 export interface PriceTier {
@@ -45,6 +48,8 @@ export interface Product {
   popularityScore: number; // 0..1
   popularCities?: string[];
   stockStatus: "in_stock" | "out";
+  rating: number; // 4.5–4.9, deterministic
+  reviews: number;
 }
 
 export interface GroupMember {

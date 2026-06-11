@@ -15,7 +15,7 @@ import type {
   UserProfile,
 } from "@/lib/types";
 import { config } from "@/lib/config";
-import { applyDeadline, applyJoin, createGroup, newId, tierPriceFor } from "@/lib/engine/groups";
+import { applyDeadline, applyJoin, newId, tierPriceFor } from "@/lib/engine/groups";
 import { productById } from "@/data/products";
 import { pickSimulatedName } from "@/data/names";
 import { emitToast, type ToastKind } from "@/lib/events";
@@ -93,7 +93,7 @@ interface BirgeState {
   ) => void;
   toggleLike: (productId: string) => void;
   ensureSeeds: () => void;
-  startGroup: (productId: string) => string | null;
+  openGroupForProduct: (productId: string) => string | null;
   joinGroup: (groupId: string) => JoinResult;
   simulateJoin: (groupId: string) => void;
   tickDeadlines: () => void;
@@ -222,17 +222,39 @@ export const useBirgeStore = create<BirgeState>()(
         if (changed) set({ groups: refreshed });
       },
 
-      startGroup: (productId) => {
-        const { user, groups } = get();
+      openGroupForProduct: (productId) => {
+        const { groups } = get();
+        const existing = Object.values(groups).find(
+          (g) => g.productId === productId && g.status === "open"
+        );
+        if (existing) return existing.id;
         const product = productById[productId];
-        if (!user || !product || product.stockStatus === "out") return null;
-        const creator: GroupMember = {
-          id: user.id,
-          name: user.displayName,
-          isSimulated: false,
-          joinedAt: Date.now(),
+        if (!product || product.stockStatus === "out") return null;
+        // Design §7: seed min−1 simulated members so the user's join is always
+        // the one that completes the group (deterministic demo arc).
+        const now = Date.now();
+        const seedCount = config.NEW_GROUP_MIN - 1;
+        const members: GroupMember[] = [];
+        for (let i = 0; i < seedCount; i++) {
+          members.push({
+            id: newId("sim"),
+            name: pickSimulatedName(members.map((m) => m.name)),
+            isSimulated: true,
+            joinedAt: now - (seedCount - i) * 7 * 60_000,
+          });
+        }
+        const group: Group = {
+          id: newId("grp"),
+          productId,
+          creatorId: members[0].id,
+          status: "open",
+          minParticipants: config.NEW_GROUP_MIN,
+          targetParticipants: config.NEW_GROUP_TARGET,
+          members,
+          currentTierPriceKzt: tierPriceFor(product, seedCount),
+          deadlineAt: now + config.GROUP_WINDOW_MS,
+          createdAt: now,
         };
-        const group = createGroup(product, creator);
         set({ groups: { ...groups, [group.id]: group } });
         track("group_started", { groupId: group.id, productId });
         broadcastSync();
@@ -357,16 +379,20 @@ export const useBirgeStore = create<BirgeState>()(
         let couponValue = 0;
         let coupons = state.coupons;
         if (input.couponCode) {
-          const idx = coupons.findIndex(
-            (c) =>
-              c.code.toLowerCase() === input.couponCode!.trim().toLowerCase() &&
-              !c.used &&
-              c.expiresAt > Date.now()
-          );
-          if (idx === -1) return { ok: false, error: "COUPON_INVALID" };
-          couponValue = coupons[idx].valueKzt;
-          coupons = coupons.map((c, i) => (i === idx ? { ...c, used: true } : c));
-          track("coupon_used", { code: input.couponCode });
+          const code = input.couponCode.trim().toUpperCase();
+          if (code === "BIRGE500") {
+            // always-valid demo promo (design §9 checkout)
+            couponValue = 500;
+            track("coupon_used", { code });
+          } else {
+            const idx = coupons.findIndex(
+              (c) => c.code.toUpperCase() === code && !c.used && c.expiresAt > Date.now()
+            );
+            if (idx === -1) return { ok: false, error: "COUPON_INVALID" };
+            couponValue = coupons[idx].valueKzt;
+            coupons = coupons.map((c, i) => (i === idx ? { ...c, used: true } : c));
+            track("coupon_used", { code });
+          }
         }
 
         const vatKzt = product.vatApplicable ? Math.round(config.VAT_RATE * unit * qty) : 0;

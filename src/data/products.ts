@@ -13,7 +13,7 @@ function makeTiers(solo: number): PriceTier[] {
   ];
 }
 
-type ProductSeed = Omit<Product, "priceTiers" | "stockStatus"> & {
+type ProductSeed = Omit<Product, "priceTiers" | "stockStatus" | "rating" | "reviews"> & {
   priceTiers?: PriceTier[];
   stockStatus?: Product["stockStatus"];
 };
@@ -513,10 +513,13 @@ const seed: ProductSeed[] = [
   },
 ];
 
-export const products: Product[] = seed.map((p) => ({
+export const products: Product[] = seed.map((p, i) => ({
   ...p,
   priceTiers: p.priceTiers ?? makeTiers(p.soloPriceKzt),
   stockStatus: p.stockStatus ?? "in_stock",
+  // deterministic, varied social proof (no runtime randomness)
+  rating: 4.5 + ((i * 7) % 5) / 10,
+  reviews: 64 + ((i * 137) % 900),
 }));
 
 export const productById = Object.fromEntries(products.map((p) => [p.id, p]));

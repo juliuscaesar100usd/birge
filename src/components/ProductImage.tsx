@@ -1,6 +1,8 @@
 import type { Product } from "@/lib/types";
+import { categoryById } from "@/data/categories";
 
-// Offline-safe product art: gradient + emoji instead of external images (NFR-1)
+// Styled placeholder tile (design prompt §3): category tint + subtle 45°
+// stripes + big product emoji — offline-safe, no real photos (NFR-1).
 export function ProductImage({
   product,
   className = "",
@@ -10,16 +12,20 @@ export function ProductImage({
   className?: string;
   emojiClassName?: string;
 }) {
+  const cat = categoryById[product.categoryId];
   return (
     <div
       className={`relative flex items-center justify-center overflow-hidden ${className}`}
-      style={{
-        background: `linear-gradient(135deg, ${product.gradient[0]}, ${product.gradient[1]})`,
-      }}
+      style={{ background: cat?.tint ?? "#EEF0F4" }}
     >
-      <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-white/10" />
-      <div className="absolute -bottom-8 -left-8 h-28 w-28 rounded-full bg-black/10" />
-      <span className={`drop-shadow-lg ${emojiClassName}`} aria-hidden>
+      <div
+        className="pimg__stripes"
+        style={{
+          background:
+            "repeating-linear-gradient(45deg, transparent 0 12px, rgba(255,255,255,.6) 12px 21px)",
+        }}
+      />
+      <span className={`relative drop-shadow-sm ${emojiClassName}`} aria-hidden>
         {product.emoji}
       </span>
     </div>

@@ -1,12 +1,13 @@
-# Birge — покупаем вместе, дешевле
+# Zigle — покупай вместе, дешевле
 
-Hackathon MVP: a mobile-first collective-buying marketplace aggregator for Kazakhstan.
-One localized feed across AliExpress / Temu / Wildberries / Ozon (mocked), prices in ₸,
-RU/KZ/EN, Pinduoduo-style group buying with tiered prices, and passwordless SIM/eSIM
-identity (simulated Silent Network Authentication).
+Hackathon MVP: a mobile collective-buying marketplace aggregator for Kazakhstan, rendered inside
+an iPhone-style frame. One localized feed across AliExpress / Temu / Wildberries / Ozon (mocked),
+prices in ₸, RU/KZ/EN, Pinduoduo-style group buying with tiered prices, passwordless SIM/eSIM
+identity (simulated Silent Network Authentication, Beeline KZ), and an AI shopping assistant.
 
-Implements BRD/PRD/TRD/Spec v1.0. Fully offline-capable: all data is mocked client-side
-(NFR-1) — no backend, no API keys, nothing to break during the pitch.
+Implements BRD/PRD/TRD/Spec v1.0 + the Zigle visual design system (blue/coral/yellow on Golos
+Text). Fully offline-capable: all commerce data is mocked client-side (NFR-1) — nothing to break
+during the pitch.
 
 ## Run
 
@@ -15,89 +16,66 @@ npm install
 npm run dev        # http://localhost:3000
 ```
 
-Open in a phone-sized viewport (or just resize — the app renders inside a phone frame
-on desktop). `npm run build && npm start` for production.
+The app renders in a fixed 402×872 phone frame auto-scaled to the viewport — open it on any
+screen. `npm run build && npm start` for production.
 
 ## Demo script (~2 minutes)
 
-1. **Splash → phone entry** — enter any 10-digit number (e.g. `707 123 45 67`).
-2. **SIM verification** — animated Silent Network Authentication, no password, no OTP.
-   Ends with the persistent **"Verified by Kcell"** badge.
-3. **Interests → budget → city → likes** — pick Электроника + Спорт, mid budget, Almaty.
-4. **Feed** — 26 products from 4 marketplaces, ranked by your interests, each with a
-   "recommended because…" line. Toggle **РУ/ҚЗ/EN** live. Search and category chips work.
-5. **Hero product** (Беспроводные наушники, first card) — solo 15 000 ₸ vs group
-   9 900 ₸, tier ladder, and an open group at **4/5**.
-6. **Join the group** → it locks at 5/5: confetti, price drops to **10 900 ₸**,
-   savings −4 100 ₸. *(This is the money shot.)*
-7. **Invite sheet** — Telegram / WhatsApp / copy link / QR. After sharing, the next
-   joiner is credited as your referral → +500 ₸ coupon.
-8. **Checkout** — savings highlighted, VAT 12%, delivery; apply coupon `WELCOME5`
-   → total **12 698 ₸**. Simulated payment → confetti → order in history.
-9. **Profile** — verified badge, total saved, orders, coupons, referrals, editable
-   preferences (feed re-ranks live).
+1. **Splash → phone entry** — custom keypad, number prefilled (`701 123 45 67`).
+2. **SIM verification** — Silent Network Authentication animation on the carrier network,
+   "Подтверждено · Beeline KZ". No password, no OTP.
+3. **Zigle ID explainer → interests → budget → city → likes.**
+4. **Feed** — blue Zigle header, promo carousel, and the **coral hot-group card**: hero group at
+   **4 из 5**, countdown ticking. Toggle **Рус/Қаз/Eng** live.
+5. **Tap the hot group** → group screen: live price, member avatars + one dashed slot,
+   "Нужно ещё 1", tier ladder with «вы здесь».
+6. **Войти в группу** → 5/5 → **threshold screen**: green gradient, confetti,
+   Было 15 000 ₸ → Стало **10 900 ₸** (−27%).
+7. **Checkout** — qty stepper, promo chips (`BIRGE500` −500 ₸ demo code or your `WELCOME5`
+   coupon), Kaspi pay row → total **12 698 ₸** → confirmation with the green savings hero.
+8. **Groups tab** — active groups with progress; **Catalog tab** — category-filtered grid.
+9. **AI tab** — the assistant answers about products, groups, delivery, VAT and orders in the
+   active language, with tappable product cards.
 
-**Live "second device":** open the same group URL in a second browser tab — joins and
-price drops propagate between tabs in real time (BroadcastChannel standing in for
-Supabase Realtime).
+**Demo helpers:** every "Купить в группе" opens a group pre-seeded at min−1 — your join always
+completes it; the dashed «Симулировать вход (демо)» button adds members manually; simulated
+participants also trickle in while a group screen is open (never delivering the locking join
+unless you are a member). A second browser tab acts as the "second device" — joins propagate
+live via BroadcastChannel.
 
-**Demo determinism:** while a group screen is open, simulated participants join every
-~6 s — but they never deliver the locking join unless you are a member. The pre-seeded
-4/5 group always waits for *your* join to complete.
+## AI assistant (AI tab)
 
-## AI assistant (✨ tab)
-
-A context-aware assistant that helps with everything: picks products for your interests and
-budget, explains group buying, answers delivery/VAT/coupon questions, and shows order status.
-It knows the full catalog and your profile, replies in RU/KZ/EN, and renders recommended
-products as tappable cards.
-
-**Free-model chain** (the header chip shows which level is active):
+Context-aware: knows the catalog, your profile, groups and orders; replies in RU/KZ/EN.
+**Free-model chain** (header chip shows the active level):
 
 1. **Gemini** — set `GOOGLE_GENERATIVE_AI_API_KEY` in `.env.local` (free key from
-   [aistudio.google.com/apikey](https://aistudio.google.com/apikey), no card needed) → best
-   free-tier model.
-2. **Free AI** — no key needed: keyless OpenAI-compatible endpoint
-   (`text.pollinations.ai`), works out of the box.
-3. **Demo mode** — offline/rate-limited → a deterministic local assistant takes over
-   seamlessly, reusing the recommendation engine. The pitch never breaks (NFR-1).
-
-Implementation: Vercel AI SDK v6 streaming route at `src/app/api/assistant/route.ts`, system
-prompt built from the catalog + user context in `src/lib/assistant/context.ts`, offline
-fallback in `src/lib/assistant/mock.ts`, chat UI at `src/app/assistant/page.tsx`.
+   [aistudio.google.com/apikey](https://aistudio.google.com/apikey)) → best free-tier model.
+2. **Free AI** — keyless OpenAI-compatible endpoint (`text.pollinations.ai`), zero setup.
+3. **Demo mode** — offline/rate-limited → deterministic local assistant reusing the
+   recommendation engine. The pitch never breaks.
 
 ## Architecture (maps to TRD)
 
 ```
 src/
-  app/                      15 screens (S1–S15 from the PRD), App Router
-  components/               ProductCard, TierLadder, GroupProgressBar, Countdown,
-                            InviteSheet, ToastHost, VerifiedBadge, …
+  app/                      18 routes: S1–S16 + /catalog + /groups + /threshold/[id]
+  components/               ZigleLogo, Icon set, ProductCard, TierLadder, HotGroupCard,
+                            BannerCarousel, GroupProgressBar, InviteSheet, Countdown, …
   lib/
-    config.ts               MOCK_MODE, GROUP_FAIL_POLICY, DEMO_AUTO_JOIN, USE_LLM_RECS
+    config.ts               MOCK_MODE, GROUP_FAIL_POLICY, DEMO_AUTO_JOIN, carrier, models
     store.ts                Zustand + localStorage persistence (the mock "backend")
-    engine/groups.ts        group state machine: OPEN → LOCKED → COMPLETED / FAILED
-    engine/recommendations  Spec §5 weights: category .40 budget .25 location .15
-                            popularity .15 taste .05 + explainability reasons
-    engine/identity.ts      IdentityProvider interface + MockSnaProvider — swaps to a
-                            real GSMA Open Gateway / CAMARA provider with no UX change
+    engine/groups.ts        state machine OPEN → LOCKED → COMPLETED / FAILED (Spec §4)
+    engine/recommendations  Spec §5 weights + explainability reasons
+    engine/identity.ts      IdentityProvider interface + MockSnaProvider — swaps to a real
+                            GSMA Open Gateway / CAMARA provider with no UX change
+    assistant/              AI system prompt + offline mock fallback
     i18n/                   RU (default) / KK / EN bundles, live switching
     sync.ts                 BroadcastChannel cross-tab realtime
-    analytics.ts            PRD §8 events → console + localStorage
-  data/                     4 marketplaces, 8 categories, 26 products with price
-                            tiers, KZ cities, simulated participant pool
+  data/                     4 marketplaces, 8 categories, 26 products with price tiers,
+                            ratings/reviews, KZ cities, simulated participant pool
 ```
 
-Level-2 swap path (TRD §9): replace `MockSnaProvider` with an Open Gateway provider and
-the Zustand mock layer with Supabase (same contracts) — the UX does not change.
+Level-2 swap path (TRD §9): replace `MockSnaProvider` with an Open Gateway provider and the
+Zustand mock layer with Supabase (same contracts) — the UX does not change.
 
-## Config flags (`src/lib/config.ts`)
-
-| Flag | Default | Meaning |
-|---|---|---|
-| `GROUP_FAIL_POLICY` | `auto_extend` | or `cancel_refund` — deadline behavior below min |
-| `DEMO_AUTO_JOIN` | `true` | simulated participants while a group screen is open |
-| `GROUP_WINDOW_MS` | 40 min | demo-compressed group window (real: 24 h) |
-| `USE_LLM_RECS` | `false` | deterministic rules only (Spec §5 fallback) |
-
-Reset the demo any time: Profile → «Сбросить демо».
+Reset the demo any time: Профиль → «Сбросить демо».

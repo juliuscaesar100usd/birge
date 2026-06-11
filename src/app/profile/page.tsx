@@ -10,11 +10,12 @@ import { categoryById } from "@/data/categories";
 import { cityById } from "@/data/cities";
 import { formatKzt } from "@/lib/currency";
 import { Avatar } from "@/components/Avatar";
-import { VerifiedBadge } from "@/components/VerifiedBadge";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { BottomNav } from "@/components/BottomNav";
+import { Icon } from "@/components/Icon";
 
-// S15 — Profile: verified identity, orders with savings, coupons, referrals, prefs
+// S15 — Profile: blue header with centered identity, savings stat, orders,
+// referral card, coupons, language, demo reset (design §9)
 export default function ProfilePage() {
   const { t, locale } = useI18n();
   const router = useRouter();
@@ -38,36 +39,43 @@ export default function ProfilePage() {
   });
 
   return (
-    <div className="flex h-full flex-col">
-      <header className="flex shrink-0 items-center justify-between px-5 pb-2 pt-5">
-        <h1 className="text-xl font-bold">{t("profile")}</h1>
-        <LanguageToggle />
+    <div className="screen-anim flex h-full flex-col">
+      {/* blue header with centered identity */}
+      <header
+        className="shrink-0 px-5 pb-5 pt-[58px] text-center text-white"
+        style={{ background: "linear-gradient(180deg,#2E86F5 0%,#1668E3 100%)" }}
+      >
+        <div className="flex items-center justify-between">
+          <h1 className="text-[17px] font-extrabold">{t("profile")}</h1>
+          <LanguageToggle dark />
+        </div>
+        <div className="mt-2 flex flex-col items-center">
+          <Avatar name={user.phone.slice(-4)} size="h-16 w-16 text-xl" />
+          <p className="num mt-2.5 text-[17px] font-extrabold">{user.phone}</p>
+          <span className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-white/16 px-3 py-1 text-[11.5px] font-bold">
+            <Icon name="shield" size={12} sw={2.6} color="#7CF2B6" /> {t("verified_identity")}
+          </span>
+        </div>
+        <div className="mt-4 flex items-center justify-between rounded-2xl bg-white/14 px-4 py-3 backdrop-blur-sm">
+          <div className="text-left">
+            <p className="text-[11px] font-bold uppercase tracking-wide text-white/65">{t("total_saved")}</p>
+            <p className="num text-[21px] font-extrabold">{formatKzt(totalSaved)}</p>
+          </div>
+          <span className="num rounded-full bg-white/16 px-3 py-1.5 text-[12px] font-bold">
+            {t("orders_count", { n: orders.length })}
+          </span>
+        </div>
       </header>
 
-      <main className="flex-1 space-y-4 overflow-y-auto no-scrollbar px-5 pb-4 pt-1">
-        {/* identity card (FR-1.3) */}
-        <div className="card flex items-center gap-3.5">
-          <Avatar name={user.displayName} size="h-14 w-14 text-xl" />
-          <div>
-            <p className="text-base font-bold tabular-nums">{user.phone}</p>
-            <VerifiedBadge carrier={user.carrierLabel} className="mt-1.5" />
-          </div>
-        </div>
-
-        {/* savings stat */}
-        <div className="card flex items-center justify-between bg-gradient-to-r from-primary to-primary-dark text-white">
-          <div>
-            <p className="text-xs font-semibold text-white/75">{t("total_saved")}</p>
-            <p className="mt-0.5 text-2xl font-extrabold tabular-nums">{formatKzt(totalSaved)}</p>
-          </div>
-          <span className="text-4xl">💰</span>
-        </div>
-
-        {/* orders (FR-7.3) */}
+      <main className="flex-1 space-y-4 overflow-y-auto no-scrollbar px-4 pb-24 pt-4">
+        {/* orders */}
         <section>
-          <h2 className="mb-2 text-sm font-bold text-muted">📦 {t("my_orders")}</h2>
+          <h2 className="t-h3 mb-2">📦 {t("my_orders")}</h2>
           {orders.length === 0 ? (
-            <div className="card py-6 text-center text-sm text-muted">{t("no_orders")}</div>
+            <div className="card py-7 text-center">
+              <p className="text-sm font-bold text-ink">{t("no_orders")}</p>
+              <p className="t-sub mt-1 text-[12.5px]">{t("no_orders_sub")}</p>
+            </div>
           ) : (
             <div className="space-y-2">
               {orders.map((o) => {
@@ -76,26 +84,20 @@ export default function ProfilePage() {
                   <div key={o.id} className="card flex items-center gap-3 p-3">
                     <span className="text-2xl">{p?.emoji ?? "🛍"}</span>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold">
+                      <p className="truncate text-[13px] font-bold">
                         {p ? localized(p as unknown as Record<string, unknown>, "title", locale) : o.productId}
                       </p>
-                      <p className="text-[11px] text-muted">
-                        <span
-                          className={`mr-1.5 rounded px-1 py-0.5 font-bold ${
-                            o.mode === "group" ? "bg-primary-light text-primary-dark" : "bg-black/5"
-                          }`}
-                        >
+                      <p className="t-tiny mt-0.5">
+                        <span className={`pill-badge mr-1.5 ${o.mode === "group" ? "pill-coral" : "pill-blue"}`}>
                           {o.mode === "group" ? t("mode_group") : t("mode_solo")}
                         </span>
                         {dateFmt.format(o.createdAt)}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-bold tabular-nums">{formatKzt(o.totalKzt)}</p>
+                      <p className="num text-[13.5px] font-extrabold">{formatKzt(o.totalKzt)}</p>
                       {o.savingsVsSoloKzt > 0 && (
-                        <p className="text-[11px] font-bold text-success">
-                          −{formatKzt(o.savingsVsSoloKzt)}
-                        </p>
+                        <p className="num text-[11px] font-bold text-green-700">−{formatKzt(o.savingsVsSoloKzt)}</p>
                       )}
                     </div>
                   </div>
@@ -105,32 +107,49 @@ export default function ProfilePage() {
           )}
         </section>
 
-        {/* coupons (FR-8.2) */}
+        {/* referral card */}
+        <div
+          className="tap rounded-2xl p-4 text-white shadow-md"
+          style={{ background: "linear-gradient(135deg,#FF5A2C,#FF8A3C)" }}
+        >
+          <div className="flex items-center gap-3">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/18">
+              <Icon name="gift" size={22} sw={2} color="#fff" />
+            </span>
+            <div>
+              <p className="text-[14.5px] font-extrabold leading-tight">{t("referral_card")}</p>
+              <p className="mt-0.5 text-[12px] font-medium text-white/85">{t("referral_sub")}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* coupons */}
         <section>
-          <h2 className="mb-2 text-sm font-bold text-muted">🎟 {t("my_coupons")}</h2>
+          <h2 className="t-h3 mb-2">🎟 {t("my_coupons")}</h2>
           <div className="space-y-2">
             {coupons.map((c) => (
               <div
                 key={c.code}
                 className={`card flex items-center justify-between border border-dashed p-3 ${
-                  c.used ? "opacity-50" : "border-accent"
+                  c.used ? "opacity-50" : ""
                 }`}
+                style={{ borderColor: c.used ? "var(--color-line)" : "var(--color-yellow)" }}
               >
                 <div>
-                  <p className="font-mono text-sm font-bold">{c.code}</p>
-                  <p className="text-[11px] text-muted">
+                  <p className="font-mono text-[13px] font-extrabold">{c.code}</p>
+                  <p className="t-tiny">
                     {c.used ? t("coupon_used") : t("coupon_until", { date: dateFmt.format(c.expiresAt) })}
                   </p>
                 </div>
-                <span className="text-sm font-extrabold text-amber-600">−{formatKzt(c.valueKzt)}</span>
+                <span className="num text-[14px] font-extrabold text-amber-600">−{formatKzt(c.valueKzt)}</span>
               </div>
             ))}
           </div>
         </section>
 
-        {/* referrals (FR-8.1) */}
+        {/* referrals */}
         <section>
-          <h2 className="mb-2 text-sm font-bold text-muted">🤝 {t("my_referrals")}</h2>
+          <h2 className="t-h3 mb-2">🤝 {t("my_referrals")}</h2>
           {referrals.length === 0 ? (
             <div className="card py-5 text-center text-xs text-muted">{t("no_referrals")}</div>
           ) : (
@@ -138,42 +157,44 @@ export default function ProfilePage() {
               {referrals.map((r) => (
                 <div key={r.id} className="card flex items-center gap-3 p-3">
                   <Avatar name={r.inviteeName} size="h-9 w-9 text-xs" />
-                  <p className="flex-1 text-sm font-semibold">{r.inviteeName}</p>
-                  <span className="text-sm font-bold text-success">+{formatKzt(r.rewardKzt)}</span>
+                  <p className="flex-1 text-[13.5px] font-bold">{r.inviteeName}</p>
+                  <span className="num text-[13.5px] font-extrabold text-green-700">+{formatKzt(r.rewardKzt)}</span>
                 </div>
               ))}
             </div>
           )}
         </section>
 
-        {/* preferences (FR-2.5) */}
+        {/* preferences */}
         <section>
-          <h2 className="mb-2 text-sm font-bold text-muted">⚙️ {t("preferences")}</h2>
+          <h2 className="t-h3 mb-2">⚙️ {t("preferences")}</h2>
           <div className="card space-y-3">
             <div className="flex items-start justify-between gap-3">
               <div className="flex flex-wrap gap-1.5">
                 {user.interests.map((cid) => {
                   const c = categoryById[cid];
                   return c ? (
-                    <span key={cid} className="rounded-full bg-bg px-2.5 py-1 text-[11px] font-semibold">
+                    <span key={cid} className="rounded-full bg-bg px-2.5 py-1 text-[11px] font-bold">
                       {c.icon} {localized(c as unknown as Record<string, unknown>, "name", locale)}
                     </span>
                   ) : null;
                 })}
               </div>
-              <Link href="/onboarding/interests?edit=1" className="shrink-0 text-xs font-bold text-primary-dark">
+              <Link href="/onboarding/interests?edit=1" className="shrink-0 text-xs font-extrabold text-blue">
                 {t("edit")}
               </Link>
             </div>
-            <div className="flex items-center justify-between border-t border-black/5 pt-3 text-sm">
+            <div className="hr" />
+            <div className="flex items-center justify-between text-sm">
               <span className="text-muted">
                 {t("budget_label")}: <b className="text-ink">{t(`budget_${user.budgetBand}`)}</b>
               </span>
-              <Link href="/onboarding/budget?edit=1" className="text-xs font-bold text-primary-dark">
+              <Link href="/onboarding/budget?edit=1" className="text-xs font-extrabold text-blue">
                 {t("edit")}
               </Link>
             </div>
-            <div className="flex items-center justify-between border-t border-black/5 pt-3 text-sm">
+            <div className="hr" />
+            <div className="flex items-center justify-between text-sm">
               <span className="text-muted">
                 {t("city_label")}:{" "}
                 <b className="text-ink">
@@ -181,14 +202,16 @@ export default function ProfilePage() {
                 </b>
               </span>
             </div>
+            <div className="hr" />
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted">{t("language")}</span>
+              <LanguageToggle />
+            </div>
           </div>
         </section>
 
-        <button
-          onClick={resetAll}
-          className="w-full py-2 text-center text-xs font-semibold text-danger/70"
-        >
-          {t("reset_demo")}
+        <button onClick={resetAll} className="flex w-full items-center justify-center gap-1.5 py-2 text-xs font-bold text-coral-700/80">
+          <Icon name="refresh" size={13} sw={2.4} /> {t("reset_demo")}
         </button>
       </main>
 

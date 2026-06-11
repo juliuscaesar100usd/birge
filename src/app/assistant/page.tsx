@@ -188,20 +188,18 @@ export default function AssistantPage() {
     mode === "gemini" ? "Gemini ✨" : mode === "free" ? `✨ ${t("assistant_mode_free")}` : mode === "demo" ? `🤖 ${t("assistant_mode_demo")}` : "…";
 
   return (
-    <div className="flex h-full flex-col">
-      <header className="flex shrink-0 items-center justify-between px-5 pb-3 pt-5">
-        <h1 className="flex items-center gap-2 text-xl font-bold">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary-dark text-lg text-white">
+    <div className="screen-anim flex h-full flex-col">
+      <header className="flex shrink-0 items-center justify-between bg-white px-4 pb-3 pt-[58px] shadow-sm">
+        <h1 className="flex items-center gap-2.5 text-[17px] font-extrabold">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#2E86F5] to-[#0E52C0] text-base text-white">
             ✨
           </span>
           {t("assistant_title")}
         </h1>
-        <span className="rounded-full bg-primary-light px-2.5 py-1 text-[11px] font-bold text-primary-dark">
-          {modeChip}
-        </span>
+        <span className="pill-badge pill-blue">{modeChip}</span>
       </header>
 
-      <main className="flex-1 space-y-3 overflow-y-auto no-scrollbar px-4 pb-3">
+      <main className="flex-1 space-y-3 overflow-y-auto no-scrollbar px-4 pb-3 pt-3">
         {/* static welcome bubble */}
         <div className="max-w-[85%] rounded-2xl rounded-tl-md bg-white p-3.5 text-sm shadow-sm">
           {t("assistant_welcome")}
