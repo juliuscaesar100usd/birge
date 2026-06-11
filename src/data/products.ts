@@ -1,15 +1,25 @@
 import type { PriceTier, Product } from "@/lib/types";
+import { scraped } from "./scraped";
 
 const round100 = (x: number) => Math.round(x / 100) * 100;
 
 // Tier ladder per Spec §2.3: ≥3 tiers, strictly decreasing.
-// −14% at 3, −27% at 5 (lock threshold), −34% at 10 → satisfies BO-2 (≥30% at full group).
-function makeTiers(solo: number): PriceTier[] {
+// Max discount varies −30%…−40% per product (deterministic, seeded from the id)
+// so badges differ card-to-card while still satisfying BO-2 (≥30% at full group).
+function makeTiers(solo: number, id: string): PriceTier[] {
+  let hash = 0;
+  for (const ch of id) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
+  const max = 0.3 + (hash % 11) / 100; // 0.30 … 0.40
+  const ladder = [max * 0.42, max * 0.78, max].map((d) => round100(solo * (1 - d)));
+  // rounding to 100 ₸ can collide on cheap items — enforce strictly decreasing
+  for (let i = 1; i < ladder.length; i++) {
+    if (ladder[i] >= ladder[i - 1]) ladder[i] = ladder[i - 1] - 100;
+  }
   return [
     { minParticipants: 1, unitPriceKzt: solo },
-    { minParticipants: 3, unitPriceKzt: round100(solo * 0.86) },
-    { minParticipants: 5, unitPriceKzt: round100(solo * 0.73) },
-    { minParticipants: 10, unitPriceKzt: round100(solo * 0.66) },
+    { minParticipants: 3, unitPriceKzt: ladder[0] },
+    { minParticipants: 5, unitPriceKzt: ladder[1] },
+    { minParticipants: 10, unitPriceKzt: ladder[2] },
   ];
 }
 
@@ -513,10 +523,18 @@ const seed: ProductSeed[] = [
   },
 ];
 
-export const products: Product[] = seed.map((p) => ({
-  ...p,
-  priceTiers: p.priceTiers ?? makeTiers(p.soloPriceKzt),
-  stockStatus: p.stockStatus ?? "in_stock",
-}));
+// Merge dev-time scraped overrides (real photos + prices); seed stays the
+// hand-written source of truth and the offline fallback.
+export const products: Product[] = seed.map((p) => {
+  const over = scraped[p.id] ?? {};
+  const solo = p.priceTiers ? p.soloPriceKzt : (over.soloPriceKzt ?? p.soloPriceKzt);
+  return {
+    ...p,
+    image: over.image,
+    soloPriceKzt: solo,
+    priceTiers: p.priceTiers ?? makeTiers(solo, p.id),
+    stockStatus: p.stockStatus ?? "in_stock",
+  };
+});
 
 export const productById = Object.fromEntries(products.map((p) => [p.id, p]));

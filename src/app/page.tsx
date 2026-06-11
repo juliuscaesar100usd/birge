@@ -14,7 +14,7 @@ export default function SplashPage() {
   const features = [
     { icon: "🛍️", title: t("feat_agg_title"), text: t("feat_agg") },
     { icon: "👥", title: t("feat_group_title"), text: t("feat_group") },
-    { icon: "📶", title: t("feat_sim_title"), text: t("feat_sim") },
+    { icon: "🪪", title: t("feat_sim_title"), text: t("feat_sim") },
   ];
 
   return (

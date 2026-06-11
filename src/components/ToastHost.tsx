@@ -26,7 +26,8 @@ export function ToastHost() {
   }, []);
 
   return (
-    <div className="pointer-events-none absolute inset-x-0 top-3 z-50 flex flex-col items-center gap-2 px-4">
+    // top-16 clears the screen-title header zone so toasts never cover it
+    <div className="pointer-events-none absolute inset-x-0 top-16 z-50 flex flex-col items-center gap-2 px-4">
       <AnimatePresence>
         {toasts.map((toast) => (
           <motion.div

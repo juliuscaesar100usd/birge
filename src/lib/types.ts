@@ -37,6 +37,7 @@ export interface Product {
   descriptionEn: string;
   emoji: string;
   gradient: [string, string];
+  image?: string; // local photo under /public; emoji+gradient is the fallback
   soloPriceKzt: number;
   priceTiers: PriceTier[]; // strictly decreasing price as minParticipants grows
   deliveryDays: number;
