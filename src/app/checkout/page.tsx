@@ -7,6 +7,8 @@ import { useBirgeStore } from "@/lib/store";
 import { productById } from "@/data/products";
 import { formatKzt } from "@/lib/currency";
 import { config } from "@/lib/config";
+import { identityProvider, securityFor } from "@/lib/engine/identity";
+import { track } from "@/lib/analytics";
 import { ProductImage } from "@/components/ProductImage";
 import { MarketplaceBadge } from "@/components/MarketplaceBadge";
 import { Icon } from "@/components/Icon";
@@ -25,11 +27,25 @@ function CheckoutInner() {
   const group = useBirgeStore((s) => (groupId ? s.groups[groupId] : undefined));
   const coupons = useBirgeStore((s) => s.coupons);
   const placeOrder = useBirgeStore((s) => s.placeOrder);
+  const security = useBirgeStore((s) => s.security);
+  const user = useBirgeStore((s) => s.user);
 
   const [qty, setQty] = useState(1);
   const [couponInput, setCouponInput] = useState("");
   const [appliedCode, setAppliedCode] = useState<string | null>(null);
   const [couponError, setCouponError] = useState(false);
+  const [idState, setIdState] = useState<"idle" | "pending" | "done">("idle");
+
+  const sec = securityFor(user?.phone ?? "", user?.carrierLabel ?? config.CARRIER_LABEL, security);
+  const simLabel = sec.simType === "sim" ? t("sim_label") : t("esim_label");
+  const stepUp = () => {
+    if (idState !== "idle") return;
+    setIdState("pending");
+    identityProvider.confirmAction("purchase").then(() => {
+      setIdState("done");
+      track("identity_step_up", { productId, simType: sec.simType });
+    });
+  };
 
   if (!product) return null;
   if (mode === "group" && (!group || (group.status !== "locked" && group.status !== "completed"))) {
@@ -222,6 +238,34 @@ function CheckoutInner() {
       </main>
 
       <div className="actionbar shrink-0">
+        {/* SIM/eSIM step-up — identity confirmation at the trust moment */}
+        {idState === "done" ? (
+          <div className="mb-2 flex items-center justify-center gap-2 rounded-xl bg-green-50 px-3 py-2 text-[12.5px] font-bold text-green-700">
+            <Icon name="shield" size={14} sw={2.4} color="#0E7E45" />
+            {t("identity_step_up_done", { id: sec.identityId })}
+          </div>
+        ) : (
+          <button
+            onClick={stepUp}
+            disabled={idState === "pending"}
+            className="btn btn--ghost btn--sm mb-2 w-full gap-2"
+          >
+            {idState === "pending" ? (
+              <>
+                <span
+                  className="inline-block h-3.5 w-3.5 rounded-full border-2 border-blue border-t-transparent"
+                  style={{ animation: "spinrev .8s linear infinite" }}
+                />
+                {t("identity_step_up_pending")}
+              </>
+            ) : (
+              <>
+                <Icon name="lock" size={15} sw={2.2} color="#1668E3" />
+                {t("identity_step_up_cta", { sim: simLabel })}
+              </>
+            )}
+          </button>
+        )}
         <button onClick={pay} className="btn btn--blue">
           {t("pay_demo", { amount: formatKzt(total) })}
         </button>

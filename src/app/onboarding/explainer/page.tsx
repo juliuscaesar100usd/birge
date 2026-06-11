@@ -40,9 +40,9 @@ export default function ExplainerPage() {
         ))}
       </div>
 
-      <p className="t-tiny mt-4 text-center text-muted2">
-        GSMA Open Gateway · Number Verification · SNA
-      </p>
+      <Link href="/identity" className="mt-4 block text-center text-[12.5px] font-bold text-blue">
+        GSMA Open Gateway · Number Verification · SNA →
+      </Link>
 
       <div className="mt-auto pb-8 pt-5">
         <Link href="/onboarding/interests" className="btn btn--blue">

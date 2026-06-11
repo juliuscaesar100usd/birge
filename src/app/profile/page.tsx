@@ -9,6 +9,7 @@ import { productById } from "@/data/products";
 import { categoryById } from "@/data/categories";
 import { cityById } from "@/data/cities";
 import { formatKzt } from "@/lib/currency";
+import { securityFor } from "@/lib/engine/identity";
 import { Avatar } from "@/components/Avatar";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { BottomNav } from "@/components/BottomNav";
@@ -20,6 +21,7 @@ export default function ProfilePage() {
   const { t, locale } = useI18n();
   const router = useRouter();
   const user = useBirgeStore((s) => s.user);
+  const security = useBirgeStore((s) => s.security);
   const orders = useBirgeStore((s) => s.orders);
   const coupons = useBirgeStore((s) => s.coupons);
   const referrals = useBirgeStore((s) => s.referrals);
@@ -68,6 +70,36 @@ export default function ProfilePage() {
       </header>
 
       <main className="flex-1 space-y-4 overflow-y-auto no-scrollbar px-4 pb-24 pt-4">
+        {/* SIM/eSIM security panel */}
+        {(() => {
+          const sec = securityFor(user.phone, user.carrierLabel, security);
+          const simLabel = sec.simType === "sim" ? t("sim_label") : t("esim_label");
+          return (
+            <section>
+              <h2 className="t-h3 mb-2">🔐 {t("security_title")}</h2>
+              <div className="card space-y-2.5 text-[13.5px]">
+                <p className="flex items-center gap-2 font-semibold text-green-700">
+                  <Icon name="check" size={15} sw={3} color="#0E7E45" /> {t("security_device_bound")}
+                </p>
+                <p className="flex items-center gap-2 border-t border-line pt-2.5 font-semibold text-green-700">
+                  <Icon name="check" size={15} sw={3} color="#0E7E45" /> {t("security_sim_swap")}
+                </p>
+                <div className="flex items-center justify-between border-t border-line pt-2.5">
+                  <span className="text-muted">{t("security_id_label", { sim: simLabel })}</span>
+                  <span className="num font-mono text-[12.5px] font-bold">{sec.identityId}</span>
+                </div>
+                <Link
+                  href="/identity"
+                  className="flex items-center justify-between border-t border-line pt-2.5 text-[13px] font-bold text-blue"
+                >
+                  <span>{t("security_more")}</span>
+                  <Icon name="chevron" size={16} sw={2.2} color="#1668E3" />
+                </Link>
+              </div>
+            </section>
+          );
+        })()}
+
         {/* orders */}
         <section>
           <h2 className="t-h3 mb-2">📦 {t("my_orders")}</h2>

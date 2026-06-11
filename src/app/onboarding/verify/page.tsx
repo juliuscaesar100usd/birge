@@ -26,7 +26,7 @@ export default function VerifyPage() {
       .verify(pendingPhone ?? "+77011234567", (s) => !cancelled && setStep(s))
       .then((result) => {
         if (cancelled || !result.verified) return;
-        completeVerification();
+        completeVerification(result);
         setStep(4);
         redirect = setTimeout(() => router.push("/onboarding/explainer"), 1500);
       });

@@ -9,6 +9,7 @@ import { productById } from "@/data/products";
 import { formatKzt } from "@/lib/currency";
 import { config } from "@/lib/config";
 import { nextTier, tierPriceFor } from "@/lib/engine/groups";
+import { securityFor } from "@/lib/engine/identity";
 import { ProductImage } from "@/components/ProductImage";
 import { MarketplaceBadge } from "@/components/MarketplaceBadge";
 import { GroupProgressBar } from "@/components/GroupProgressBar";
@@ -26,10 +27,13 @@ export default function GroupPage() {
   const { id } = useParams<{ id: string }>();
   const group = useBirgeStore((s) => s.groups[id]);
   const user = useBirgeStore((s) => s.user);
+  const security = useBirgeStore((s) => s.security);
   const joinGroup = useBirgeStore((s) => s.joinGroup);
   const simulateJoin = useBirgeStore((s) => s.simulateJoin);
   const openGroupForProduct = useBirgeStore((s) => s.openGroupForProduct);
   const [inviteOpen, setInviteOpen] = useState(false);
+  const sec = securityFor(user?.phone ?? "", user?.carrierLabel ?? config.CARRIER_LABEL, security);
+  const simLabel = sec.simType === "sim" ? t("sim_label") : t("esim_label");
 
   const product = group ? productById[group.productId] : undefined;
   const isMember = !!user && !!group && group.members.some((m) => m.id === user.id);
@@ -175,11 +179,10 @@ export default function GroupPage() {
                 <div key={m.id} className="flex w-12 flex-col items-center gap-1 text-center">
                   <div className="relative">
                     <Avatar name={isYou ? t("you") : m.name} highlight={isYou} />
-                    {isYou && (
-                      <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-green text-white ring-2 ring-white">
-                        <Icon name="check" size={9} sw={3.4} color="#fff" />
-                      </span>
-                    )}
+                    {/* every participant is SIM/eSIM-verified — 1 person = 1 seat */}
+                    <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-green text-white ring-2 ring-white">
+                      <Icon name="check" size={9} sw={3.4} color="#fff" />
+                    </span>
                   </div>
                   <span className={`w-full truncate text-[10px] font-semibold ${isYou ? "text-blue" : "text-muted"}`}>
                     {isYou ? t("you") : m.name}
@@ -214,6 +217,17 @@ export default function GroupPage() {
               )}
             </div>
           )}
+        </div>
+
+        {/* SIM/eSIM trust strip — anti-fraud: 1 verified human = 1 seat */}
+        <div className="card flex gap-3 bg-green-50">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-green-700">
+            <Icon name="shield" size={17} sw={2.2} color="#0E7E45" />
+          </span>
+          <div>
+            <p className="text-[13.5px] font-bold text-ink">{t("group_trust_title")}</p>
+            <p className="t-sub mt-0.5 text-[12.5px]">{t("group_trust_sub", { sim: simLabel })}</p>
+          </div>
         </div>
 
         <TierLadder product={product} currentCount={count} />
