@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useI18n, localized } from "@/lib/i18n";
@@ -25,13 +25,26 @@ export default function ProfilePage() {
   const orders = useBirgeStore((s) => s.orders);
   const coupons = useBirgeStore((s) => s.coupons);
   const referrals = useBirgeStore((s) => s.referrals);
+  const setName = useBirgeStore((s) => s.setName);
   const resetAll = useBirgeStore((s) => s.resetAll);
+
+  const [editingName, setEditingName] = useState(false);
+  const [draftName, setDraftName] = useState("");
 
   useEffect(() => {
     if (!user) router.replace("/");
   }, [user, router]);
 
   if (!user) return null;
+
+  const saveName = () => {
+    setName(draftName);
+    setEditingName(false);
+  };
+  const startEditName = () => {
+    setDraftName(user.name ?? "");
+    setEditingName(true);
+  };
 
   const totalSaved = orders.reduce((sum, o) => sum + o.savingsVsSoloKzt, 0);
   const city = cityById[user.city];
@@ -52,8 +65,52 @@ export default function ProfilePage() {
           <LanguageToggle dark />
         </div>
         <div className="mt-2 flex flex-col items-center">
-          <Avatar name={user.phone.slice(-4)} size="h-16 w-16 text-xl" />
-          <p className="num mt-2.5 text-[17px] font-extrabold">{user.phone}</p>
+          <Avatar name={user.name || user.phone.slice(-4)} size="h-16 w-16 text-xl" />
+          {editingName ? (
+            <div className="mt-2.5 flex items-center gap-2">
+              <input
+                value={draftName}
+                onChange={(e) => setDraftName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") saveName();
+                  if (e.key === "Escape") setEditingName(false);
+                }}
+                placeholder={t("name_placeholder")}
+                maxLength={24}
+                autoFocus
+                className="w-44 rounded-xl bg-white/95 px-3 py-1.5 text-center text-[15px] font-bold text-ink outline-none placeholder:font-medium placeholder:text-muted2"
+              />
+              <button
+                onClick={saveName}
+                className="tap flex h-8 w-8 items-center justify-center rounded-full bg-white/20"
+                aria-label={t("save")}
+              >
+                <Icon name="check" size={16} sw={3} color="#fff" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={startEditName}
+              className="tap mt-2.5 flex items-center gap-1.5"
+              aria-label={t("edit_name")}
+            >
+              <span className="text-[17px] font-extrabold">{user.name || t("add_name")}</span>
+              <svg
+                viewBox="0 0 24 24"
+                width={14}
+                height={14}
+                fill="none"
+                stroke="#fff"
+                strokeWidth={2.2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden
+              >
+                <path d="M14.5 5.5l4 4M4 20l1-4L16 5l3 3L8 19z" />
+              </svg>
+            </button>
+          )}
+          <p className="num mt-1 text-[13px] font-semibold text-white/70">{user.phone}</p>
           <span className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-white/16 px-3 py-1 text-[11.5px] font-bold">
             <Icon name="shield" size={12} sw={2.6} color="#7CF2B6" /> {t("verified_identity")}
           </span>
