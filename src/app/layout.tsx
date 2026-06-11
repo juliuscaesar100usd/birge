@@ -12,7 +12,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Birge — покупаем вместе, дешевле",
   description:
-    "Все маркетплейсы в одном приложении: AliExpress, Temu, Wildberries и Ozon в тенге. Групповые покупки до −35%.",
+    "Все маркетплейсы в одном приложении: Kaspi.kz, Wildberries, Ozon и AliExpress в тенге. Групповые покупки до −35%.",
 };
 
 export const viewport: Viewport = {

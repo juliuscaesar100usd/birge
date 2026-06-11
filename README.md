@@ -1,7 +1,7 @@
 # Birge — покупаем вместе, дешевле
 
 Hackathon MVP: a mobile-first collective-buying marketplace aggregator for Kazakhstan.
-One localized feed across AliExpress / Temu / Wildberries / Ozon (mocked), prices in ₸,
+One localized feed across Kaspi.kz / Wildberries / Ozon / AliExpress (mocked), prices in ₸,
 RU/KZ/EN, Pinduoduo-style group buying with tiered prices, and passwordless SIM/eSIM
 identity (simulated Silent Network Authentication).
 

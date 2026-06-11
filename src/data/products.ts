@@ -58,7 +58,7 @@ const seed: ProductSeed[] = [
   },
   {
     id: "prd_02",
-    marketplaceId: "temu",
+    marketplaceId: "kaspi",
     categoryId: "electronics",
     titleRu: "Смарт-часы Fit S8",
     titleKk: "Смарт-сағат Fit S8",
@@ -71,7 +71,7 @@ const seed: ProductSeed[] = [
     soloPriceKzt: 22000,
     deliveryDays: 10,
     deliveryKzt: 990,
-    vatApplicable: true,
+    vatApplicable: false,
     popularityScore: 0.92,
     popularCities: ["almaty", "shymkent"],
   },
@@ -113,7 +113,7 @@ const seed: ProductSeed[] = [
   },
   {
     id: "prd_05",
-    marketplaceId: "temu",
+    marketplaceId: "kaspi",
     categoryId: "electronics",
     titleRu: "Защитное стекло для iPhone (3 шт.)",
     titleKk: "iPhone-ға қорғаныс әйнегі (3 дана)",
@@ -126,7 +126,7 @@ const seed: ProductSeed[] = [
     soloPriceKzt: 2500,
     deliveryDays: 9,
     deliveryKzt: 490,
-    vatApplicable: true,
+    vatApplicable: false,
     popularityScore: 0.7,
   },
   // ───────── Fashion ─────────
@@ -151,7 +151,7 @@ const seed: ProductSeed[] = [
   },
   {
     id: "prd_07",
-    marketplaceId: "temu",
+    marketplaceId: "kaspi",
     categoryId: "fashion",
     titleRu: "Худи оверсайз унисекс",
     titleKk: "Оверсайз худи (унисекс)",
@@ -164,7 +164,7 @@ const seed: ProductSeed[] = [
     soloPriceKzt: 12000,
     deliveryDays: 11,
     deliveryKzt: 790,
-    vatApplicable: true,
+    vatApplicable: false,
     popularityScore: 0.82,
   },
   {
@@ -188,7 +188,7 @@ const seed: ProductSeed[] = [
   },
   {
     id: "prd_09",
-    marketplaceId: "temu",
+    marketplaceId: "kaspi",
     categoryId: "fashion",
     titleRu: "Солнцезащитные очки Polaroid UV400",
     titleKk: "Күннен қорғайтын көзілдірік Polaroid UV400",
@@ -201,7 +201,7 @@ const seed: ProductSeed[] = [
     soloPriceKzt: 5500,
     deliveryDays: 10,
     deliveryKzt: 490,
-    vatApplicable: true,
+    vatApplicable: false,
     popularityScore: 0.66,
   },
   // ───────── Home ─────────
@@ -282,7 +282,7 @@ const seed: ProductSeed[] = [
   },
   {
     id: "prd_14",
-    marketplaceId: "temu",
+    marketplaceId: "kaspi",
     categoryId: "beauty",
     titleRu: "Набор кистей для макияжа (12 шт.)",
     titleKk: "Макияж щёткалары жинағы (12 дана)",
@@ -295,7 +295,7 @@ const seed: ProductSeed[] = [
     soloPriceKzt: 8500,
     deliveryDays: 10,
     deliveryKzt: 590,
-    vatApplicable: true,
+    vatApplicable: false,
     popularityScore: 0.72,
   },
   {
@@ -356,7 +356,7 @@ const seed: ProductSeed[] = [
   },
   {
     id: "prd_18",
-    marketplaceId: "temu",
+    marketplaceId: "kaspi",
     categoryId: "kids",
     titleRu: "Интерактивная игрушка-робот",
     titleKk: "Интерактивті робот-ойыншық",
@@ -369,7 +369,7 @@ const seed: ProductSeed[] = [
     soloPriceKzt: 7500,
     deliveryDays: 11,
     deliveryKzt: 590,
-    vatApplicable: true,
+    vatApplicable: false,
     popularityScore: 0.73,
   },
   // ───────── Sports ─────────
@@ -449,7 +449,7 @@ const seed: ProductSeed[] = [
   },
   {
     id: "prd_23",
-    marketplaceId: "temu",
+    marketplaceId: "kaspi",
     categoryId: "appliances",
     titleRu: "Электрочайник стеклянный 1,7 л",
     titleKk: "Шыны электр шәйнек, 1,7 л",
@@ -462,7 +462,7 @@ const seed: ProductSeed[] = [
     soloPriceKzt: 9000,
     deliveryDays: 10,
     deliveryKzt: 790,
-    vatApplicable: true,
+    vatApplicable: false,
     popularityScore: 0.67,
   },
   {
